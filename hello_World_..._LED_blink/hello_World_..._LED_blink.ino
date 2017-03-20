@@ -1,7 +1,8 @@
 void one_ms(unsigned long tick);
 void led(int val);
 
-static int cycle = 1500;
+static int cycle_time = 2000;
+static int time_slice_time = 1;
 static bool state_on = false;
 
 
@@ -28,8 +29,8 @@ void loop()
 
 void one_ms(unsigned long tick)
 {
-  static int out;
-  const int cycle_time = 2000;
+  static int out = 0;
+  static int cycle = 0;
   const int increment = 25500/cycle_time;
   
   if(cycle++ >= cycle_time)
