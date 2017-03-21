@@ -31,12 +31,13 @@
 #endif // end IDE
 
 
-void one_ms(unsigned long tick);
+void one_ms(unsigned long time_ms);
 void led(int val);
 
-static int cycle_time = 2000;
-static int time_slice_time = 1;
-static bool state_on = false;
+static int cycle_time = 3000;
+static int time_slice_time = 1000;
+static bool state_on = true;
+int led_value = 0;
 
 
 
@@ -50,35 +51,42 @@ void loop()
 {
     static unsigned long time_now, time_prev = 0;
     
-    time_now = millis();
+    time_now = micros(); //millis();
     if(time_now >= (time_prev + time_slice_time))
     {
         time_prev = time_now;
-        one_ms(time_now);
+        one_ms(time_now/time_slice_time);
     }
+    if(time_prev > time_now) time_prev = 0;
+
+    led(led_value);
 }
 
 
 
-void one_ms(unsigned long tick)
+void one_ms(unsigned long time_ms)
 {
     static int out = 0;
     static int cycle = 0;
     const int increment = 25500/cycle_time;
+    static unsigned long time_old = 0;
     
-    if(cycle++ >= cycle_time)
+    if(time_ms >= (time_old + cycle_time))
     {
-        cycle = 0;
+        time_old = time_ms;
         state_on = !state_on;
-    }
-    
+    }   
+    if(time_old > time_ms) time_old = 0;
+
+
+
     if(state_on)    out += increment;
     else            out -= increment;
     
     if(out > 25500) out = 25500;
-    if(out < 500)   out = 500;
+    if(out < 0)   out = 0;
     
-    led(out/100);
+    led_value = out/100;
 }
 
 
@@ -102,3 +110,4 @@ void led(int val)
     }
     
 }
+
