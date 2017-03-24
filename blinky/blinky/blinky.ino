@@ -83,7 +83,7 @@ void one_ms(unsigned long time_ms)
     if(state_on)    out += increment;
     else            out -= increment;
     
-    if(out > 25500) out = 25500;
+    if(out > 25500) out = 12800;
     if(out < 0)   out = 0;
     
     led_value = out/100;
