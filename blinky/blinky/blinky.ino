@@ -31,6 +31,9 @@
 #endif // end IDE
 
 
+#define PCB_LED 13
+#define LED 3
+
 void one_ms(unsigned long time_ms);
 void led(int val);
 
@@ -44,7 +47,9 @@ int led_value = 0;
 
 void setup()
 {
-    pinMode(13, OUTPUT);
+    pinMode(2, INPUT);
+    pinMode(LED, OUTPUT);
+    pinMode(PCB_LED, OUTPUT);
 }
 
 void loop()
@@ -68,7 +73,7 @@ void one_ms(unsigned long time_ms)
 {
     static int out = 0;
     static int cycle = 0;
-    const int increment = 25500/cycle_time;
+    const int increment = 6400/cycle_time;
     static unsigned long time_old = 0;
     
     if(time_ms >= (time_old + cycle_time))
@@ -83,10 +88,12 @@ void one_ms(unsigned long time_ms)
     if(state_on)    out += increment;
     else            out -= increment;
     
-    if(out > 25500) out = 12800;
+    if(out > 6400) out = 6400;
     if(out < 0)   out = 0;
     
     led_value = out/100;
+    
+    analogWrite(LED, led_value);
 }
 
 
@@ -96,16 +103,19 @@ void led(int val)
     int out;
     
     if(val > 255) val = 255;
+    if(val < 0) val = 0;
+
+    
     out = val + err;
     
     if(out > 127)
     {
-        digitalWrite(13, true);
+        digitalWrite(PCB_LED, true);
         err = out - 255;
     }
     else
     {
-        digitalWrite(13, false);
+        digitalWrite(PCB_LED, false);
         err = out;
     }
     
